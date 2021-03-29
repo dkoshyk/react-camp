@@ -4,6 +4,8 @@ import { createTask } from "../../api/TasksApi";
 import { taskTypes } from "../../constants/TaskTypes";
 import { SnackbarContext } from "../shared/snackbar/SnackbarContext";
 import { Link, useHistory } from 'react-router-dom';
+import { taskAdded } from "../../redux/actions/tasksActions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(() => ({
     textField: {
@@ -14,7 +16,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export default function CreateTask() {
+function CreateTask({ taskAdded }) {
     const classes = useStyles();
     const history = useHistory();
     const [name, setName] = useState('');
@@ -26,7 +28,8 @@ export default function CreateTask() {
         e.preventDefault();
 
         try {
-            await createTask({ name, description, type });
+            const task = await createTask({ name, description, type });
+            taskAdded(task);
             showSuccess();
             history.push('/tasks')
         } catch (error) {
@@ -83,3 +86,5 @@ export default function CreateTask() {
         </Card>
     );
 }
+
+export default connect(null, { taskAdded })(CreateTask);
