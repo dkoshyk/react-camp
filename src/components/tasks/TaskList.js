@@ -1,11 +1,11 @@
 import { Button, Card, CardActions, CardContent, Grid, makeStyles, TextField } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import { useState } from "react";
-import { useEffect } from "react";
-import { deleteTask, getPublicTasks } from "../../api/TasksApi";
+import { deleteTask } from "../../api/TasksApi";
 import { Link } from 'react-router-dom';
 import { getTaskTypeLabel } from "../../constants/TaskTypes";
 import ConfirmDialog from "../shared/dialog/ConfirmDialog";
+import { useGetTaskList } from '../../hooks/useGetTaskList';
 
 const useStyles = makeStyles({
     card: {
@@ -15,26 +15,15 @@ const useStyles = makeStyles({
 
 export default function TaskList() {
     const classes = useStyles();
-    const [taskList, setTaskList] = useState([]);
     const [pageSize] = useState(5);
     const [page, setPage] = useState(1);
-    const [count, setCount] = useState(0);
     const [containsTitle, setContainsTitle] = useState('');
-    const [state, setState] = useState(0);
-    const forceUpdate = () => setState(state + 1);
+    const { taskList, count, forceUpdate } = useGetTaskList({ pageSize, page, containsTitle });
 
     const handlePageChange = (event, value) => {
         console.log(event);
         setPage(value);
     };
-
-    useEffect(() => {
-        (async () => {
-            let result = await getPublicTasks({ pageSize, page, containsTitle });
-            setTaskList(result.items);
-            setCount(result.count);
-        })()
-    }, [page, pageSize, containsTitle, state])
 
     const handleDeleteTask = async (event, value) => {
         await deleteTask(value);

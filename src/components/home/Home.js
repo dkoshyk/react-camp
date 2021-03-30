@@ -1,5 +1,7 @@
 import { Button, List, ListItem, ListItemText, makeStyles, TextField } from "@material-ui/core";
+import { TimerOutlined } from "@material-ui/icons";
 import { useState } from "react";
+import { ErrorBoundary } from './../shared/errorBoundary/ErrorBoundary';
 
 const useStyles = makeStyles(() => ({
     textField: {
@@ -10,7 +12,9 @@ const useStyles = makeStyles(() => ({
 export function Home() {
     return (
         <div>
-            <TodoApplication />
+            <ErrorBoundary>
+                <TodoApplication />
+            </ErrorBoundary>
         </div>
     );
 }
@@ -18,6 +22,7 @@ export function Home() {
 function TodoApplication() {
     const [items, setItems] = useState([{ name: 'c' }, { name: 'a' }, { name: 'b' }]);
 
+    //throw new Error('Handled!');
 
     function addEntryToItems(newItem) {
         setItems([...items, newItem]);
@@ -43,6 +48,7 @@ function CreateTodoItem({ addEntryToItems }) {
 
     return (
         <div>
+
             <form onSubmit={e => handleSubmit(e)}>
                 <div>
                     <TextField label='Name' variant="outlined" className={classes.textField}
